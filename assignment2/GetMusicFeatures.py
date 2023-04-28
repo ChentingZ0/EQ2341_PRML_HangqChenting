@@ -31,7 +31,7 @@ frIsequence= Matrix containing pitch, correlation, and intensity estimates
 References:
 This method is based on a pitch estimator provided by Obada Alhaj Moussa.
 '''
-
+import numpy as np
 def GetMusicFeatures(signal, fs, winlength=0.03):
 
     # Wikipedia: "human voices are roughly in the range of 80 Hz to 1100 Hz"
