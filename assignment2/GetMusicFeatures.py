@@ -40,21 +40,22 @@ def GetMusicFeatures(signal, fs, winlength=0.03):
 
     signal = np.real(np.double(signal)) # Make sure the signal is a real double
 
-    signal = signal - np.mean(signal) # Remove DC, which can disturb intesities
+    signal = signal - np.mean(signal) # Remove DC, which can disturb intensities
 
     if fs <= 0:
-        fs = samplerate # Replace illegal fs-values with the read sampling freq.
+        # fs = samplerate # Replace illegal fs-values with the read sampling freq.
+        fs = 8000
 
     # Compute the pitch periods in samples for the human voice range
-    minlag = int( np.round(fs/maxpitch) )
-    maxlag = int( np.round(fs/minpitch) )
+    minlag = int(np.round(fs/maxpitch))
+    maxlag = int(np.round(fs/minpitch))
 
     winlength = np.abs(winlength)
     winlength = np.round(winlength*fs) # Convert to number of samples
     winlength = max([ winlength+(winlength % 2), 2*minlag ]) # Make windows sufficiently long and an even sample number
 
-    winstep = int( winlength/2 );
-    nsteps = int( np.floor(len(signal)/winstep) ) - 1
+    winstep = int(winlength/2)
+    nsteps = int(np.floor(len(signal)/winstep)) - 1
 
     if (nsteps < 1):
         print(['ERROR: Signal too short. Use at least %s samples!'%(str(winlength))])
@@ -89,7 +90,7 @@ def yin_pitch(signal,minlag=40,maxlag=200):
         # Estimate correlation ("dif") at lag idx
         dif[idx - minlag] = sum((seg1 - seg2)**2) / (N - idx)
 
-    thresh = (max(dif) - min(dif)) * 0.1 + min(dif);
+    thresh = (max(dif) - min(dif)) * 0.1 + min(dif)
 
     
     # Locate the first minimum of dif, which is the first maximum of the
