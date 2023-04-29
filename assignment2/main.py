@@ -92,6 +92,7 @@ print(frIsequence1.shape,type(frIsequence1),'dimension of frIsequence')
 print(frIsequence1[:,0:5],'print the first five frames')
 
 # plot the pitch
+# \todo look at the frequency range 100–300 Hz especially
 plt.figure(2, figsize=[10,15])
 plt.subplot(3, 1, 1)
 plt.plot(frequence1, frIsequence1[0, :])
