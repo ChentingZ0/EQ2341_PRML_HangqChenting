@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 import GetMusicFeatures
-import Feature_Extractor
+from Feature_Extractor import normalized_intensity
 import os
 import simpleaudio as sa
 import wave
@@ -96,18 +96,18 @@ print(frIsequence1[:,0:5],'print the first five frames')
 plt.figure(2, figsize=[10,15])
 plt.subplot(3, 1, 1)
 plt.plot(frequence1, frIsequence1[0, :])
-plt.ylabel('Frequency/Hz')
+plt.ylabel('pitch/Hz')
 plt.title('melody 1')
 
 plt.subplot(3, 1, 2)
 plt.plot(frequence2, frIsequence2[0, :])
-plt.ylabel('Frequency/Hz')
+plt.ylabel('pitch/Hz')
 plt.title('melody 2')
 
 plt.subplot(3, 1, 3)
 plt.plot(frequence3, frIsequence3[0, :])
-plt.xlabel('Time frame')
-plt.ylabel('Frequency/Hz')
+plt.xlabel('frame index')
+plt.ylabel('pitch/Hz')
 plt.title('melody 3')
 plt.savefig('figures/pitch_plot.png')
 plt.show()
@@ -116,18 +116,18 @@ plt.show()
 plt.figure(3, figsize=[10,15])
 plt.subplot(3, 1, 1)
 plt.plot(frequence1, frIsequence1[1, :])
-plt.ylabel('Frequency/Hz')
+plt.ylabel('Correlation coefficient')
 plt.title('melody 1')
 
 plt.subplot(3, 1, 2)
 plt.plot(frequence2, frIsequence2[1, :])
-plt.ylabel('Frequency/Hz')
+plt.ylabel('Correlation coefficient')
 plt.title('melody 2')
 
 plt.subplot(3, 1, 3)
 plt.plot(frequence3, frIsequence3[1, :])
-plt.xlabel('Correlation coefficient')
-plt.ylabel('Frequency/Hz')
+plt.xlabel('frame index')
+plt.ylabel('Correlation coefficient')
 plt.title('melody 3')
 plt.savefig('figures/correlation_plot.png')
 plt.show()
@@ -136,23 +136,63 @@ plt.show()
 plt.figure(4, figsize=[10,15])
 plt.subplot(3, 1, 1)
 plt.plot(frequence1, frIsequence1[2, :])
-plt.ylabel('Frequency/Hz')
+plt.ylabel('Intensity')
 plt.title('melody 1')
 
 plt.subplot(3, 1, 2)
 plt.plot(frequence2, frIsequence2[2, :])
-plt.ylabel('Frequency/Hz')
+plt.ylabel('Intensity')
 plt.title('melody 2')
 
 plt.subplot(3, 1, 3)
 plt.plot(frequence3, frIsequence3[2, :])
-plt.xlabel('Intensity')
-plt.ylabel('Frequency/Hz')
+plt.xlabel('frame index')
+plt.ylabel('Intensity')
 plt.title('melody 3')
 plt.savefig('figures/intensity_plot.png')
 plt.show()
 
+pitch_log1, intensity_nor1 = normalized_intensity(frIsequence1)
+pitch_log2, intensity_nor2 = normalized_intensity(frIsequence2)
+pitch_log3, intensity_nor3 = normalized_intensity(frIsequence3)
 
+plt.figure(5, figsize=[10,15])
+plt.subplot(3, 1, 1)
+plt.plot(frequence1, pitch_log1)
+plt.ylabel('pitch_log_scale')
+plt.title('melody 1')
+
+plt.subplot(3, 1, 2)
+plt.plot(frequence2, pitch_log2)
+plt.ylabel('pitch_log_scale')
+plt.title('melody 2')
+
+plt.subplot(3, 1, 3)
+plt.plot(frequence3, pitch_log3)
+plt.xlabel('frame index')
+plt.ylabel('pitch_log_scale')
+plt.title('melody 3')
+plt.savefig('figures/pitch_log_scale.png')
+plt.show()
+# ----------------------------------------------------
+plt.figure(6, figsize=[10,15])
+plt.subplot(3, 1, 1)
+plt.plot(frequence1, intensity_nor1)
+plt.ylabel('Normalized intensity')
+plt.title('melody 1')
+
+plt.subplot(3, 1, 2)
+plt.plot(frequence2, intensity_nor2)
+plt.ylabel('Normalized intensity')
+plt.title('melody 2')
+
+plt.subplot(3, 1, 3)
+plt.plot(frequence3, intensity_nor3)
+plt.xlabel('frame index')
+plt.ylabel('Normalized intensity')
+plt.title('melody 3')
+plt.savefig('figures/normalized intensity.png')
+plt.show()
 
 
 
