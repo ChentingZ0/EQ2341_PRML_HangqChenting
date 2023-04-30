@@ -2,9 +2,6 @@ import GetMusicFeatures
 import numpy as np
 from matplotlib import pyplot as plt
 
-# frIsequence1 = GetMusicFeatures.GetMusicFeatures(data1, sample_rate1)
-# frIsequence2 = GetMusicFeatures.GetMusicFeatures(data2, sample_rate2)
-# frIsequence3 = GetMusicFeatures.GetMusicFeatures(data3, sample_rate3)
 
 def normalized_intensity(frIsequence):
     pitch=frIsequence[0, :]
@@ -34,8 +31,18 @@ def filter_pitch(frIsequence):
     pitch_log, intensity_nor = normalized_intensity(frIsequence)
 
     # filter out unvoiced frame based on intensity and correlation
-    threshold_cor = 
-    threshold_intensity =
+    threshold_cor = 0.75
+    threshold_intensity_nor = np.mean(intensity_nor)
+    for i in range(0, frame_num):
+        if pitch_log[i] < 3.46 or pitch_log[i] > 6.9 or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
+            pitch_log[i] = 0 # define as unvoiced
+    return pitch_log
+
+
+    # test code in main(test pass)
+
+def 
+
 
 
 

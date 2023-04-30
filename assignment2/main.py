@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 import GetMusicFeatures
-from Feature_Extractor import normalized_intensity
+from Feature_Extractor import normalized_intensity, filter_pitch
 import os
 import simpleaudio as sa
 import wave
@@ -195,7 +195,27 @@ plt.savefig('figures/normalized intensity.png')
 plt.show()
 
 
+filter_pitch1 = filter_pitch(frIsequence1)
+filter_pitch2 = filter_pitch(frIsequence2)
+filter_pitch3 = filter_pitch(frIsequence3)
 
+plt.figure(7, figsize=[10,15])
+plt.subplot(3, 1, 1)
+plt.plot(frequence1, filter_pitch1)
+plt.ylabel('filter_pitch')
+plt.title('melody 1')
 
+plt.subplot(3, 1, 2)
+plt.plot(frequence2, filter_pitch2)
+plt.ylabel('filter_pitch')
+plt.title('melody 2')
+
+plt.subplot(3, 1, 3)
+plt.plot(frequence3, filter_pitch3)
+plt.xlabel('frame index')
+plt.ylabel('filter_pitch')
+plt.title('melody 3')
+plt.savefig('figures/filter_pitch.png')
+plt.show()
 
 
