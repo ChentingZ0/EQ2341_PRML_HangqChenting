@@ -2,6 +2,29 @@ import GetMusicFeatures
 import numpy as np
 from matplotlib import pyplot as plt
 import math
+import statistics
+
+
+def median_nonzero(input_list):
+    input_list = [0, 0, 0, 1, 2, 3, 0, 0, 0, 0, 5, 8, 9, 0, 0, 0, 0, 2, 9, 8]
+    sublists = []
+    sublist = []
+
+    for num in input_list:
+        if num != 0:
+            sublist.append(num)
+        elif sublist:
+            templist = [statistics.median(sublist)] * len(sublist)
+            sublists.append(templist)
+            sublist = []
+
+    if sublist:
+        templist_last = [statistics.median(sublist)] * len(sublist)
+        sublists.append(templist_last)
+
+    sublists = [elem for row in sublists for elem in row]
+    # filter out the silence, and use the median value of non-zeros, make it a new list
+    return sublists
 
 def normalized_intensity(frIsequence):
     pitch=frIsequence[0, :]
@@ -38,10 +61,27 @@ def filter_pitch(frIsequence):
         if pitch_log[i] < 3.46 or pitch_log[i] > 6.9 or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
             pitch_log[i] = 0 # define as unvoiced
             pitch[i] = 0
-    return pitch, pitch_log
+    # subdivide the note based on non-zero value
+
+    pitch = median_nonzero(pitch)
+    pitch_log = median_nonzero(pitch_log)
+    return pitch
 
 
     # test code in main(test pass)
+
+
+# list comprehension. elegant algorithm
+
+
+
+
+
+
+
+
+
+
 
 def note_name(semi_tone_relative):
     semi_tone_index = {
