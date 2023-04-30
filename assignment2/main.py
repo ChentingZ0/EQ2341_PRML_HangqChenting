@@ -281,8 +281,10 @@ _, semi_drag1 = semi_adjust(filter_pitch1)
 
 # test if transposition invariant
 frIsequence1_trans = np.copy(frIsequence1)
+shift = 3
 for i in range(0, frame_num1):
-    frIsequence1_trans[0,i] = 1.5 * frIsequence1[0,i]
+    # f2 = f1 * (2 ^ (1 / 12)) ^ n
+    frIsequence1_trans[0,i] = frIsequence1[0,i] * 2**(shift/12)
 filter_pitch1_trans, _ = filter_pitch(frIsequence1_trans)
 _, semi_drag1_trans = semi_adjust(filter_pitch1_trans)
 print(semi_drag1_trans,'trans semi')
