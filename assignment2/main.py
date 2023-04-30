@@ -20,11 +20,11 @@ print("Number of samples:", data1.shape[0])
 print("Duration (seconds):", data1.shape[0] / sample_rate1)
 
 # listen to wav file
-wav1 = wave.open(path1, 'rb')
-data = wav1.readframes(wav1.getnframes())
-play_obj = sa.play_buffer(data, wav1.getnchannels(), wav1.getsampwidth(), wav1.getframerate())
-play_obj.wait_done()
-wav1.close()
+# wav1 = wave.open(path1, 'rb')
+# data = wav1.readframes(wav1.getnframes())
+# play_obj = sa.play_buffer(data, wav1.getnchannels(), wav1.getsampwidth(), wav1.getframerate())
+# play_obj.wait_done()
+# wav1.close()
 
 # print time plot of three wav
 
@@ -257,4 +257,18 @@ plt.xlabel('Voice_frame')
 plt.ylabel('semi_tone_absolute')
 plt.title('semi_tones')
 plt.savefig('figures/semitones_melody.png')
+plt.show()
+
+
+plt.figure(9)
+plt.subplot(3, 1, 1)
+plt.plot(frequence1_temp, semi_tone_relative1)
+plt.subplot(3, 1, 2)
+plt.plot(frequence2_temp, semi_tone_relative2)
+plt.subplot(3, 1, 3)
+plt.plot(frequence3_temp, semi_tone_relative3)
+plt.xlabel('Voice_frame')
+plt.ylabel('semi_tone_relative')
+plt.title('semi_tones')
+plt.savefig('figures/semitones_relative.png')
 plt.show()

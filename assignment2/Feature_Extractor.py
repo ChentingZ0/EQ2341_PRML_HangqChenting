@@ -14,16 +14,13 @@ def median_nonzero(input_list):
         if num != 0:
             sublist.append(num)
         elif sublist:
-            templist = [statistics.median(sublist)] * len(sublist)
-            # sublists.append([0] * len)
+            templist = [statistics.median(sublist)] * int(len(sublist)*100/len(input_list))
             sublists.append(templist)
             sublist = []
 
     if sublist:
-        templist_last = [statistics.median(sublist)] * len(sublist)
-        # sublists.append([0] * len)
+        templist_last = [statistics.median(sublist)] * int(len(sublist)*100/len(input_list))
         sublists.append(templist_last)
-        # sublists.append([0] * len)
 
     sublists = [elem for row in sublists for elem in row]
     # filter out the silence, and use the median value of non-zeros, make it a new list
@@ -60,15 +57,15 @@ def filter_pitch(frIsequence):
     # filter out unvoiced frame based on intensity and correlation
     threshold_cor = 0.8
     threshold_intensity_nor = np.mean(intensity_nor)
-    thresholdPitch = np.mean(pitch) + np.std(pitch)
+
     for i in range(0, frame_num):
-        if pitch_log[i] > thresholdPitch or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
+        if pitch_log[i] > 6.953 or pitch_log[i] < 3.487 or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
             pitch_log[i] = 0 # define as unvoiced
             pitch[i] = 0
     # subdivide the note based on non-zero value
 
-    # pitch = median_nonzero(pitch)
-    # pitch_log = median_nonzero(pitch_log)
+    pitch = median_nonzero(pitch)
+    pitch_log = median_nonzero(pitch_log)
     return pitch, pitch_log
 
 
@@ -144,6 +141,12 @@ def semi_melody(filter_pitch):
     for i in range(len(filter_pitch)):
         if filter_pitch[i] != 0:
             octave[i], semi_tone_relative[i], semi_tone_absolute[i], _ = analysis_note(filter_pitch[i])
+
+    # drag all to C4
+
+
+    # transpose invariant
+    # octave invariant
 
     return octave, semi_tone_relative, semi_tone_absolute, note
 
