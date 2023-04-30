@@ -37,3 +37,5 @@ for i in range(len(semi_drag)):
         semi_drag[i] = semi_drag[i] % 12
 
 print(semi_drag)
+
+print(np.log2(32.703), np.log2(1046.502))
