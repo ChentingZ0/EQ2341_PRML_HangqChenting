@@ -48,6 +48,8 @@ def data_wav(wav):
 time1, data1 = data_wav(wav1)
 time2, data2 = data_wav(wav2)
 time3, data3 = data_wav(wav3)
+# ----------------------------------------------------
+
 plt.figure(1, figsize=[10, 15])
 plt.subplot(3,1,1)
 plt.plot(time1, data1)
@@ -90,6 +92,7 @@ frequence3 = np.arange(0,frame_num3)
 
 print(frIsequence1.shape,type(frIsequence1),'dimension of frIsequence')
 print(frIsequence1[:,0:5],'print the first five frames')
+# ----------------------------------------------------
 
 # plot the pitch
 # \todo look at the frequency range 100–300 Hz especially
@@ -111,6 +114,7 @@ plt.ylabel('pitch/Hz')
 plt.title('melody 3')
 plt.savefig('figures/pitch_plot.png')
 plt.show()
+# ----------------------------------------------------
 
 # plot the correlation coefficient
 plt.figure(3, figsize=[10,15])
@@ -131,6 +135,7 @@ plt.ylabel('Correlation coefficient')
 plt.title('melody 3')
 plt.savefig('figures/correlation_plot.png')
 plt.show()
+# ----------------------------------------------------
 
 # plot the intensity
 plt.figure(4, figsize=[10,15])
@@ -155,6 +160,7 @@ plt.show()
 pitch_log1, intensity_nor1 = normalized_intensity(frIsequence1)
 pitch_log2, intensity_nor2 = normalized_intensity(frIsequence2)
 pitch_log3, intensity_nor3 = normalized_intensity(frIsequence3)
+# ----------------------------------------------------
 
 plt.figure(5, figsize=[10,15])
 plt.subplot(3, 1, 1)
@@ -195,9 +201,9 @@ plt.savefig('figures/normalized intensity.png')
 plt.show()
 
 
-filter_pitch1 = filter_pitch(frIsequence1)
-filter_pitch2 = filter_pitch(frIsequence2)
-filter_pitch3 = filter_pitch(frIsequence3)
+_, filter_pitch1 = filter_pitch(frIsequence1)
+_, filter_pitch2 = filter_pitch(frIsequence2)
+_, filter_pitch3 = filter_pitch(frIsequence3)
 
 plt.figure(7, figsize=[10,15])
 plt.subplot(3, 1, 1)
@@ -215,7 +221,8 @@ plt.plot(frequence3, filter_pitch3)
 plt.xlabel('frame index')
 plt.ylabel('filter_pitch')
 plt.title('melody 3')
-plt.savefig('figures/filter_pitch.png')
+plt.savefig('figures/filter_pitch_log.png')
 plt.show()
+
 
 
