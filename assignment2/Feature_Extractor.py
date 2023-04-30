@@ -5,7 +5,7 @@ import math
 import statistics
 
 
-def median_nonzero(input_list, len=25):
+def median_nonzero(input_list):
     # hyperparameter len(assigned duration of each note and silence)
     sublists = []
     sublist = []
@@ -14,16 +14,16 @@ def median_nonzero(input_list, len=25):
         if num != 0:
             sublist.append(num)
         elif sublist:
-            templist = [statistics.median(sublist)] * len
-            sublists.append([0] * len)
+            templist = [statistics.median(sublist)] * len(sublist)
+            # sublists.append([0] * len)
             sublists.append(templist)
             sublist = []
 
     if sublist:
-        templist_last = [statistics.median(sublist)] * len
-        sublists.append([0] * len)
+        templist_last = [statistics.median(sublist)] * len(sublist)
+        # sublists.append([0] * len)
         sublists.append(templist_last)
-        sublists.append([0] * len)
+        # sublists.append([0] * len)
 
     sublists = [elem for row in sublists for elem in row]
     # filter out the silence, and use the median value of non-zeros, make it a new list
@@ -58,16 +58,17 @@ def filter_pitch(frIsequence):
     pitch_log, intensity_nor = normalized_intensity(frIsequence)
 
     # filter out unvoiced frame based on intensity and correlation
-    threshold_cor = 0.9
+    threshold_cor = 0.8
     threshold_intensity_nor = np.mean(intensity_nor)
+    thresholdPitch = np.mean(pitch) + np.std(pitch)
     for i in range(0, frame_num):
-        if pitch_log[i] < 3.46 or pitch_log[i] > 6.9 or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
+        if pitch_log[i] > thresholdPitch or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
             pitch_log[i] = 0 # define as unvoiced
             pitch[i] = 0
     # subdivide the note based on non-zero value
 
-    pitch = median_nonzero(pitch)
-    pitch_log = median_nonzero(pitch_log)
+    # pitch = median_nonzero(pitch)
+    # pitch_log = median_nonzero(pitch_log)
     return pitch, pitch_log
 
 
