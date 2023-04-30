@@ -32,7 +32,7 @@ def filter_pitch(frIsequence):
     pitch_log, intensity_nor = normalized_intensity(frIsequence)
 
     # filter out unvoiced frame based on intensity and correlation
-    threshold_cor = 0.75
+    threshold_cor = 0.8
     threshold_intensity_nor = np.mean(intensity_nor)
     for i in range(0, frame_num):
         if pitch_log[i] < 3.46 or pitch_log[i] > 6.9 or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
@@ -60,19 +60,20 @@ def note_name(semi_tone_relative):
     }
     for name, index in semi_tone_index.items():
         if index == semi_tone_relative:
-            print("the corresponding note name is {}".format(name))
-    return name, semi_tone_relative
+            # print("the corresponding note name is {}".format(name))
+            note_represent = name
+    return note_represent
 
 def analysis_note(test_tone):
     # analysis each note
     octave_C = [32.703, 65.406, 130.813, 261.626, 523.251, 1046.502]  # C1-C6 frequency in HZ, C4->middle C
     octave_C_log = np.log(octave_C)
     semi_tones = []  # (5,12)
-    print(octave_C_log)
+    # print(octave_C_log)
 
     for i in range(len(octave_C) - 1):
         semi_tones.append(np.linspace(octave_C_log[i], octave_C_log[i + 1], 12).tolist())
-    print(semi_tones)
+    # print(semi_tones)
 
     octave = 0
     for i, c in enumerate(octave_C):
@@ -80,10 +81,10 @@ def analysis_note(test_tone):
             octave = i + 1
             break
 
-    print("The test tone belongs to octave C{}".format(octave))
+    # print("The test tone belongs to octave C{}".format(octave))
     semitones_specific = semi_tones[octave - 1]
 
-    print(semi_tones[octave - 1])
+    # print(semi_tones[octave - 1])
 
     test_tone_log = np.log(test_tone)
     semi_tone_relative = 0
@@ -96,12 +97,12 @@ def analysis_note(test_tone):
             break
 
     note = note_name(semi_tone_relative)
-
+    # use relative semi_tone can address the problem of jump one octave(8)
     return octave, semi_tone_relative, note
 
 
-test_tone = 329.628
-octave, semi_tone_relative, note = analysis_note(test_tone)
+# test_tone = 329.628
+# octave, semi_tone_relative, note = analysis_note(test_tone)
 
 
 
