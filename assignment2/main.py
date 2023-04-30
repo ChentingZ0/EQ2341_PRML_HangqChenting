@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 import GetMusicFeatures
-from Feature_Extractor import normalized_intensity, filter_pitch, semi_melody
+from Feature_Extractor import normalized_intensity, filter_pitch, semi_adjust
 import os
 import simpleaudio as sa
 import wave
@@ -240,12 +240,13 @@ plt.show()
 #
 # analysis the semitones of melody1
 
-octave1, semi_tone_relative1, semi_tone_absolute1, note1 = semi_melody(filter_pitch1)
-octave2, semi_tone_relative2, semi_tone_absolute2, note2 = semi_melody(filter_pitch2)
-octave3, semi_tone_relative3, semi_tone_absolute3, note3 = semi_melody(filter_pitch3)
+semi_tone_absolute1, semi_drag1 = semi_adjust(filter_pitch1)
+semi_tone_absolute2, semi_drag2 = semi_adjust(filter_pitch2)
+semi_tone_absolute3, semi_drag3 = semi_adjust(filter_pitch3)
 
+print(semi_drag1,'semitone1')
+print(semi_drag2,'semitone1')
 
-#
 plt.figure(8)
 plt.subplot(3, 1, 1)
 plt.plot(frequence1_temp, semi_tone_absolute1)
@@ -262,13 +263,50 @@ plt.show()
 
 plt.figure(9)
 plt.subplot(3, 1, 1)
-plt.plot(frequence1_temp, semi_tone_relative1)
+plt.plot(frequence1_temp, semi_drag1)
 plt.subplot(3, 1, 2)
-plt.plot(frequence2_temp, semi_tone_relative2)
+plt.plot(frequence2_temp, semi_drag2)
 plt.subplot(3, 1, 3)
-plt.plot(frequence3_temp, semi_tone_relative3)
+plt.plot(frequence3_temp, semi_drag3)
 plt.xlabel('Voice_frame')
 plt.ylabel('semi_tone_relative')
 plt.title('semi_tones')
-plt.savefig('figures/semitones_relative.png')
+plt.savefig('figures/semitones_drag.png')
+plt.show()
+
+# finally feature -> semitones_drag!!!! discrete feature
+frIsequence1 = GetMusicFeatures.GetMusicFeatures(data1, sample_rate1)
+filter_pitch1, _ = filter_pitch(frIsequence1)
+_, semi_drag1 = semi_adjust(filter_pitch1)
+
+# test if transposition invariant
+frIsequence1_trans = np.copy(frIsequence1)
+for i in range(0, frame_num1):
+    frIsequence1_trans[0,i] = 1.5 * frIsequence1[0,i]
+filter_pitch1_trans, _ = filter_pitch(frIsequence1_trans)
+_, semi_drag1_trans = semi_adjust(filter_pitch1_trans)
+print(semi_drag1_trans,'trans semi')
+
+# test if volume invariant
+frIsequence1_vol = GetMusicFeatures.GetMusicFeatures(2 * data1, sample_rate1)
+filter_pitch1_vol, _ = filter_pitch(frIsequence1_vol)
+_, semi_drag1_vol = semi_adjust(filter_pitch1_vol)
+
+# test if octave invariant
+frIsequence1_octave = np.copy(frIsequence1)
+random_numbers = np.random.randint(0, frame_num1, size=5)
+print(random_numbers)       # randomly choose 10 frames to octave jump (2 octaves, *4)
+for i in range(len(random_numbers)):
+    frIsequence1_octave[0, random_numbers[i]] = 4 * frIsequence1[0, random_numbers[i]]
+filter_pitch1_octave, _ = filter_pitch(frIsequence1_octave)
+_, semi_drag1_octave = semi_adjust(filter_pitch1_octave)
+
+plt.figure(10)
+plt.plot(frequence1_temp, semi_drag1)
+plt.plot(frequence1_temp, semi_drag1_octave)
+plt.plot(frequence1_temp, semi_drag1_trans)
+
+# plt.subplot(3,1,3)
+# plt.plot(frequence1_temp, semi_drag1_vol)
+plt.savefig('figures/variation.png')
 plt.show()

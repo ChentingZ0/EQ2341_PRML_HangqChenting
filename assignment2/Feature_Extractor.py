@@ -14,12 +14,12 @@ def median_nonzero(input_list):
         if num != 0:
             sublist.append(num)
         elif sublist:
-            templist = [statistics.median(sublist)] * int(len(sublist)*100/len(input_list))
+            templist = [statistics.median(sublist)] * len(sublist)
             sublists.append(templist)
             sublist = []
 
     if sublist:
-        templist_last = [statistics.median(sublist)] * int(len(sublist)*100/len(input_list))
+        templist_last = [statistics.median(sublist)] * len(sublist)
         sublists.append(templist_last)
 
     sublists = [elem for row in sublists for elem in row]
@@ -132,7 +132,7 @@ def analysis_note(test_tone):
     return octave, semi_tone_relative, semitone_absolute, note
 
 
-def semi_melody(filter_pitch):
+def semi_adjust(filter_pitch):
     semi_tone_relative = np.zeros(len(filter_pitch))
     semi_tone_absolute = np.zeros(len(filter_pitch))
     octave = np.zeros(len(filter_pitch))
@@ -142,16 +142,22 @@ def semi_melody(filter_pitch):
         if filter_pitch[i] != 0:
             octave[i], semi_tone_relative[i], semi_tone_absolute[i], _ = analysis_note(filter_pitch[i])
 
-    # drag all to C4
-
-
     # transpose invariant
-    # octave invariant
+    # relative interval should stay the same, all drag to C1
+    lowest = np.min(semi_tone_absolute)
+    semi_drag = semi_tone_absolute - lowest
 
-    return octave, semi_tone_relative, semi_tone_absolute, note
+    # octave invariant(suddenly one note change)
+    # how to define a sudden jump note
+    for i in range(len(semi_drag)):
+        if semi_drag[i] > 12:    # limitation, how to perceive octave jump? worth thinking
+            semi_drag[i] = semi_drag[i] % 12
+    return semi_tone_absolute, semi_drag
 
-# test_tone = 329.628
-# octave, semi_tone_relative, note = analysis_note(test_tone)
+
+
+
+
 
 
 
