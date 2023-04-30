@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 import GetMusicFeatures
-from Feature_Extractor import normalized_intensity, filter_pitch, analysis_note
+from Feature_Extractor import normalized_intensity, filter_pitch, semi_melody
 import os
 import simpleaudio as sa
 import wave
@@ -201,58 +201,60 @@ plt.savefig('figures/normalized intensity.png')
 plt.show()
 
 
-filter_pitch1 = filter_pitch(frIsequence1)
-print(filter_pitch1)
+filter_pitch1, filter_pitch1_log = filter_pitch(frIsequence1)
+print(filter_pitch1_log)
+filter_pitch2, filter_pitch2_log = filter_pitch(frIsequence2)
+filter_pitch3, filter_pitch3_log = filter_pitch(frIsequence3)
 
-# filter_pitch2, filter_pitch2_log = filter_pitch(frIsequence2)
-# filter_pitch3, filter_pitch3_log = filter_pitch(frIsequence3)
-#
-# plt.figure(7, figsize=[10,15])
-# plt.subplot(3, 1, 1)
-# plt.plot(frequence1, filter_pitch1_log)
-# plt.ylabel('filter_pitch')
-# plt.title('melody 1')
-#
-# plt.subplot(3, 1, 2)
-# plt.plot(frequence2, filter_pitch2_log)
-# plt.ylabel('filter_pitch')
-# plt.title('melody 2')
-#
-# plt.subplot(3, 1, 3)
-# plt.plot(frequence3, filter_pitch3_log)
-# plt.xlabel('frame index')
-# plt.ylabel('filter_pitch')
-# plt.title('melody 3')
-# plt.savefig('figures/filter_pitch_log.png')
-# plt.show()
+# diff_notes1 =
+# diff_notes2 =
+# print(diff_notes1, diff_notes2, 'how many different notes')
+voice_frame_num1 = len(filter_pitch1)
+voice_frame_num2 = len(filter_pitch2)
+voice_frame_num3 = len(filter_pitch3)
+
+frequence1_temp = np.arange(0, voice_frame_num1)
+frequence2_temp = np.arange(0, voice_frame_num2)
+frequence3_temp = np.arange(0, voice_frame_num3)
+
+
+plt.figure(7, figsize=[10,15])
+plt.subplot(3, 1, 1)
+plt.plot(frequence1_temp, filter_pitch1_log)
+plt.ylabel('filter_pitch')
+plt.title('melody 1')
+
+plt.subplot(3, 1, 2)
+plt.plot(frequence2_temp, filter_pitch2_log)
+plt.ylabel('filter_pitch')
+plt.title('melody 2')
+
+plt.subplot(3, 1, 3)
+plt.plot(frequence3_temp, filter_pitch3_log)
+plt.xlabel('frame index')
+plt.ylabel('filter_pitch')
+plt.title('melody 3')
+plt.savefig('figures/filter_pitch_log.png')
+plt.show()
 # # ----------------------------------------------------
 #
-# # analysis the semitones of melody1
-#
-#
-#
-# # filter_pitch1
-# # extract the voiced frame(exclude the duration of silence)
-# # print(filter_pitch1[26])
-#
-# # semi_tone_relative = np.zeros(frame_num1)
-# # octave = np.zeros(frame_num1)
-# # note = np.zeros(frame_num1)
-# # for i in range(frame_num1):
-# #     if filter_pitch1[i] != 0:
-# #         octave[i], semi_tone_relative[i], _ = analysis_note(filter_pitch1[i])
-# #
-# # print(semi_tone_relative)
-# #
-# plt.figure(8)
-# # plt.subplot(2, 1, 1)
-# plt.plot(frequence1, filter_pitch1)
-# # plt.subplot(2, 1, 2)
-# # plt.plot(frequence1, semi_tone_relative)
-# # plt.xlabel('frame index')
-# # plt.ylabel('pitch1')
-# # plt.title('melody 1')
-# # plt.savefig('figures/filter_pitch1.png')
-# plt.show()
-# print(filter_pitch1)
+# analysis the semitones of melody1
 
+octave1, semi_tone_relative1, semi_tone_absolute1, note1 = semi_melody(filter_pitch1)
+octave2, semi_tone_relative2, semi_tone_absolute2, note2 = semi_melody(filter_pitch2)
+octave3, semi_tone_relative3, semi_tone_absolute3, note3 = semi_melody(filter_pitch3)
+
+
+#
+plt.figure(8)
+plt.subplot(3, 1, 1)
+plt.plot(frequence1_temp, semi_tone_absolute1)
+plt.subplot(3, 1, 2)
+plt.plot(frequence2_temp, semi_tone_absolute2)
+plt.subplot(3, 1, 3)
+plt.plot(frequence3_temp, semi_tone_absolute3)
+plt.xlabel('Voice_frame')
+plt.ylabel('semi_tone_absolute')
+plt.title('semi_tones')
+plt.savefig('figures/semitones_melody.png')
+plt.show()

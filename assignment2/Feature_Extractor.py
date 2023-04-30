@@ -5,8 +5,8 @@ import math
 import statistics
 
 
-def median_nonzero(input_list):
-    input_list = [0, 0, 0, 1, 2, 3, 0, 0, 0, 0, 5, 8, 9, 0, 0, 0, 0, 2, 9, 8]
+def median_nonzero(input_list, len=25):
+    # hyperparameter len(assigned duration of each note and silence)
     sublists = []
     sublist = []
 
@@ -14,13 +14,16 @@ def median_nonzero(input_list):
         if num != 0:
             sublist.append(num)
         elif sublist:
-            templist = [statistics.median(sublist)] * len(sublist)
+            templist = [statistics.median(sublist)] * len
+            sublists.append([0] * len)
             sublists.append(templist)
             sublist = []
 
     if sublist:
-        templist_last = [statistics.median(sublist)] * len(sublist)
+        templist_last = [statistics.median(sublist)] * len
+        sublists.append([0] * len)
         sublists.append(templist_last)
+        sublists.append([0] * len)
 
     sublists = [elem for row in sublists for elem in row]
     # filter out the silence, and use the median value of non-zeros, make it a new list
@@ -55,7 +58,7 @@ def filter_pitch(frIsequence):
     pitch_log, intensity_nor = normalized_intensity(frIsequence)
 
     # filter out unvoiced frame based on intensity and correlation
-    threshold_cor = 0.8
+    threshold_cor = 0.9
     threshold_intensity_nor = np.mean(intensity_nor)
     for i in range(0, frame_num):
         if pitch_log[i] < 3.46 or pitch_log[i] > 6.9 or intensity_nor[i] < threshold_intensity_nor or correlation[i] < threshold_cor:
@@ -65,24 +68,13 @@ def filter_pitch(frIsequence):
 
     pitch = median_nonzero(pitch)
     pitch_log = median_nonzero(pitch_log)
-    return pitch
+    return pitch, pitch_log
 
 
     # test code in main(test pass)
 
 
 # list comprehension. elegant algorithm
-
-
-
-
-
-
-
-
-
-
-
 def note_name(semi_tone_relative):
     semi_tone_index = {
         "C": 0,
@@ -136,13 +128,28 @@ def analysis_note(test_tone):
             else: semi_tone_relative = i                        # approximate to the nearest semitone
             break
 
+    semitone_absolute = octave * 12 + semi_tone_relative
     note = note_name(semi_tone_relative)
     # use relative semi_tone can address the problem of jump one octave(8)
-    return octave, semi_tone_relative, note
+    return octave, semi_tone_relative, semitone_absolute, note
 
+
+def semi_melody(filter_pitch):
+    semi_tone_relative = np.zeros(len(filter_pitch))
+    semi_tone_absolute = np.zeros(len(filter_pitch))
+    octave = np.zeros(len(filter_pitch))
+    note = np.zeros(len(filter_pitch))
+
+    for i in range(len(filter_pitch)):
+        if filter_pitch[i] != 0:
+            octave[i], semi_tone_relative[i], semi_tone_absolute[i], _ = analysis_note(filter_pitch[i])
+
+    return octave, semi_tone_relative, semi_tone_absolute, note
 
 # test_tone = 329.628
 # octave, semi_tone_relative, note = analysis_note(test_tone)
+
+
 
 
 
