@@ -1,7 +1,4 @@
-import GetMusicFeatures
 import numpy as np
-from matplotlib import pyplot as plt
-import math
 import statistics
 from collections import Counter
 
@@ -155,10 +152,15 @@ def semi_adjust(filter_pitch):
             if min_element == semi_tone_absolute[i] and count_dict[min_element] < threshold:
                 semi_tone_absolute[i] = max_element
 
-    mid = np.median(semi_tone_absolute)
-    semi_drag = semi_tone_absolute - mid
+    semi_normalized = []
+    for i in range(len(semi_tone_absolute)):
+        normalized_value = (semi_tone_absolute[i] - np.min(np.array(semi_tone_absolute))) / (np.max(np.array(semi_tone_absolute) - np.min(np.array(semi_tone_absolute))))
+        semi_normalized.append(normalized_value)
 
-    return semi_tone_absolute, semi_drag
+    semi_normalized = [i*120 for i in semi_normalized]
+    semi_normalized = [round(i) for i in semi_normalized]
+
+    return semi_tone_absolute, semi_normalized
 
 
 

@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from scipy.io import wavfile
 import GetMusicFeatures
-from Feature_Extractor import normalized_intensity, filter_pitch, semi_adjust
+from Feature_Extractor import normalized_intensity, filter_pitch, semi_adjust, analysis_note
 import os
 import simpleaudio as sa
 import wave
@@ -92,7 +92,7 @@ frequence3 = np.arange(0,frame_num3)
 
 # print(frIsequence1.shape,type(frIsequence1),'dimension of frIsequence')
 # print(frIsequence1[:,0:5],'print the first five frames')
-# ----------------------------------------------------
+# -------------------------------------------------------------
 
 # plot the pitch
 # \todo look at the frequency range 100–300 Hz especially
@@ -199,7 +199,7 @@ plt.ylabel('Normalized intensity')
 plt.title('melody 3')
 plt.savefig('figures/normalized intensity.png')
 plt.show()
-# ----------------------------------------------------
+# ---------------------------------------------------------------------------------------------data
 
 filter_pitch1, filter_pitch1_log = filter_pitch(frIsequence1)
 # print(filter_pitch1_log)
@@ -220,17 +220,17 @@ frequence3_temp = np.arange(0, voice_frame_num3)
 
 plt.figure(7, figsize=[10,15])
 plt.subplot(3, 1, 1)
-plt.plot(frequence1_temp, filter_pitch1_log)
+plt.plot(frequence1_temp, filter_pitch1)
 plt.ylabel('filter_pitch')
 plt.title('melody 1')
 
 plt.subplot(3, 1, 2)
-plt.plot(frequence2_temp, filter_pitch2_log)
+plt.plot(frequence2_temp, filter_pitch2)
 plt.ylabel('filter_pitch')
 plt.title('melody 2')
 
 plt.subplot(3, 1, 3)
-plt.plot(frequence3_temp, filter_pitch3_log)
+plt.plot(frequence3_temp, filter_pitch3)
 plt.xlabel('frame index')
 plt.ylabel('filter_pitch')
 plt.title('melody 3')
@@ -240,46 +240,19 @@ plt.show()
 #
 # analysis the semitones of melody1
 
-semi_tone_absolute1, semi_drag1 = semi_adjust(filter_pitch1)
-semi_tone_absolute2, semi_drag2 = semi_adjust(filter_pitch2)
-semi_tone_absolute3, semi_drag3 = semi_adjust(filter_pitch3)
-
-for i in range(len(semi_drag1)):
-    semi_drag1[i] = (semi_drag1[i] - np.min(np.array(semi_drag1)))/(np.max(np.array(semi_drag1) - np.min(np.array(semi_drag1))))
-for i in range(len(semi_drag2)):
-    semi_drag2[i] = (semi_drag2[i] - np.min(np.array(semi_drag2)))/(np.max(np.array(semi_drag2) - np.min(np.array(semi_drag2))))
-for i in range(len(semi_drag3)):
-    semi_drag3[i] = (semi_drag3[i] - np.min(np.array(semi_drag3)))/(np.max(np.array(semi_drag3) - np.min(np.array(semi_drag3))))
+semi_tone_absolute1, semi_normalized1 = semi_adjust(filter_pitch1)
+semi_tone_absolute2, semi_normalized2 = semi_adjust(filter_pitch2)
+semi_tone_absolute3, semi_normalized3 = semi_adjust(filter_pitch3)
 
 
 
-
-
-print(semi_drag1,'semitone1')
-print(semi_drag2,'semitone2')
-print(semi_drag3,'semitone3')
-
-plt.figure(8)
+plt.figure(8, figsize=[10,15])
 plt.subplot(3, 1, 1)
-plt.plot(frequence1_temp, semi_tone_absolute1)
+plt.plot(frequence1_temp, semi_normalized1)
 plt.subplot(3, 1, 2)
-plt.plot(frequence2_temp, semi_tone_absolute2)
+plt.plot(frequence2_temp, semi_normalized2)
 plt.subplot(3, 1, 3)
-plt.plot(frequence3_temp, semi_tone_absolute3)
-plt.xlabel('Voice_frame')
-plt.ylabel('semi_tone_absolute')
-plt.title('semi_tones')
-plt.savefig('figures/semitones_melody.png')
-plt.show()
-
-
-plt.figure(9)
-plt.subplot(3, 1, 1)
-plt.plot(frequence1_temp, semi_drag1)
-plt.subplot(3, 1, 2)
-plt.plot(frequence2_temp, semi_drag2)
-plt.subplot(3, 1, 3)
-plt.plot(frequence3_temp, semi_drag3)
+plt.plot(frequence3_temp, semi_normalized3)
 plt.xlabel('Voice_frame')
 plt.ylabel('semi_tone_drag')
 plt.title('semi_tones')
@@ -288,35 +261,67 @@ plt.show()
 
 # Finally feature -> semitones_normalized!!!! discrete feature
 frIsequence1 = GetMusicFeatures.GetMusicFeatures(data1, sample_rate1)
-filter_pitch1, _ = filter_pitch(frIsequence1)
+pitch_log1, intensity_nor1 = normalized_intensity(frIsequence1)
+filter_pitch1, filter_pitch1_log = filter_pitch(frIsequence1)
+semi_absolute1, semi_normalized1 = semi_adjust(filter_pitch1)
 
-semi_absolute1 , semi_drag1 = semi_adjust(filter_pitch1)
 
+voice_frame_num1 = len(filter_pitch1)
+frequence1_temp = np.arange(0, voice_frame_num1)
 
+notes = filter_pitch1
+note = []
+for i in notes:
+    _, _, _,note_temp = analysis_note(i)
+    note.append(note_temp)
+
+with open('notes.txt', 'w') as file:
+    for item in note:
+        file.write(f"{item}")
 
 # test if transposition invariant
 frIsequence1_trans = np.copy(frIsequence1)
 shift = 5
-for i in range(0, frame_num2):
+for i in range(0, frame_num1):
     # f2 = f1 * (2 ^ (1 / 12)) ^ n
-    frIsequence1_trans[0, i] = frIsequence1[0, i] * 2 ** (shift/12)
-filter_pitch1_trans, _ = filter_pitch(frIsequence1_trans)
-semi_trans1_absolute, semi_drag1_trans = semi_adjust(filter_pitch1_trans)
-# print(semi_trans1_absolute, '\n', 'absolute tone trans')
-# print(semi_drag1_trans, '\n', 'trans semi')
+    frIsequence1_trans[0, i] = frIsequence1[0, i] * 2**(shift/12)
 
-# test if volume invariant
+pitch1_trans = frIsequence1_trans[0, :]
 
+filter_pitch1_trans, filter_pitch1_trans_log = filter_pitch(frIsequence1_trans)
+semi_absolute1_trans, semi_normalized1_trans = semi_adjust(filter_pitch1_trans)
+
+voice_frame_num1_trans = len(filter_pitch1_trans)
+frequence1_temp_trans = np.arange(0, voice_frame_num1_trans)
+
+
+
+# draw figure
+plt.figure(figsize=[10,15])
+plt.plot(frequence1_temp, semi_normalized1)
+plt.plot(frequence1_temp_trans, semi_normalized1_trans)
+plt.legend(['original','transposition version'])
+plt.xlabel('frame index')
+plt.ylabel('features')
+plt.title('melody 1 and note transposition')
+plt.savefig('figures/features_transposition.png')
+plt.show()
+
+
+
+# test if volumn invariant
 frIsequence1_vol = GetMusicFeatures.GetMusicFeatures(1.5*data1, sample_rate1)
 filter_pitch1_vol, _ = filter_pitch(frIsequence1_vol)
 voice_frame_num1_vol = len(filter_pitch1_vol)
 frequence1_temp_vol = np.arange(0, voice_frame_num1_vol)
 semi_absolute1_vol , semi_drag1_vol = semi_adjust(filter_pitch1_vol)
 plt.figure(10)
-plt.plot(frequence1_temp, semi_drag1)
+plt.plot(frequence1_temp, semi_normalized1)
 plt.plot(frequence1_temp_vol, semi_drag1_vol)
+plt.legend(['original','volumn×1.5 version'])
 plt.xlabel('frame_num')
-plt.ylabel('semi_normalized')
+plt.ylabel('feature')
+plt.title('melody1 and volumn change')
 plt.savefig('figures/volumn_change.png')
 plt.show()
 
