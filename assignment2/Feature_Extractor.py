@@ -98,11 +98,14 @@ def analysis_note(test_tone):
     # analysis each note
     octave_C = [32.703, 65.406, 130.813, 261.626, 523.251, 1046.502]  # C1-C6 frequency in HZ, C4->middle C
     octave_C_log = np.log2(octave_C)
+    # octave_C_log = [5, 6, 7, 8, 9, 10]
     semi_tones = []  # (5,12)
     # print(octave_C_log)
 
     for i in range(len(octave_C) - 1):
-        semi_tones.append(np.linspace(octave_C_log[i], octave_C_log[i + 1], 12).tolist())
+        semi_tones.append(np.linspace(octave_C_log[i], octave_C_log[i + 1], 13)[:-1].tolist())
+
+    # semi_tones = [item for sublist in semi_tones for item in sublist]
     # print(semi_tones)
 
     octave = 0
@@ -113,22 +116,28 @@ def analysis_note(test_tone):
 
     # print("The test tone belongs to octave C{}".format(octave))
     semitones_specific = semi_tones[octave - 1]
-
-    # print(semi_tones[octave - 1])
-
+    # print(semitones_specific)
+    # print([2**i for i in semitones_specific])
     test_tone_log = np.log2(test_tone)
     semi_tone_relative = 0
 
     for i, c in enumerate(semitones_specific):
-        if c <= test_tone_log < semitones_specific[i + 1]:      # find the specific interval
-            if test_tone_log - c > semitones_specific[i + 1] - test_tone_log:
-                semi_tone_relative = i + 1
-            else: semi_tone_relative = i                        # approximate to the nearest semitone
-            break
+        if i == len(semitones_specific) - 1:
+            # print(octave_C_log[octave])
+            if test_tone_log - c > octave_C_log[octave] - test_tone_log:
+                octave = octave + 1
+                semi_tone_relative = 0
+        else:
+            if c <= test_tone_log < semitones_specific[i + 1]:  # find the specific interval
+                if test_tone_log - c > semitones_specific[i + 1] - test_tone_log:
+                    semi_tone_relative = i + 1
+                else:
+                    semi_tone_relative = i  # approximate to the nearest semitone
+                break
+
 
     semitone_absolute = octave * 12 + semi_tone_relative
     note = note_name(semi_tone_relative)
-    # use relative semi_tone can address the problem of jump one octave(8)
     return octave, semi_tone_relative, semitone_absolute, note
 
 
