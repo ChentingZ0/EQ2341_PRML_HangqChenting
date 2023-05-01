@@ -65,10 +65,16 @@ frequence1_temp = np.arange(0, voice_frame_num1)
 
 semi_absolute1, semi_drag1 = semi_adjust(filter_pitch1)
 print(semi_absolute1, '\n', 'absolute tone original')
-notes = semi_absolute1
-# for i in notes:
-#     _,_,_,note = analysis_note(i)
-#     print(note, end="")
+notes = filter_pitch1
+note = []
+for i in notes:
+    _,_,_,note_temp = analysis_note(i)
+    note.append(note_temp)
+
+with open('notes.txt', 'w') as file:
+    for item in note:
+        file.write(f"{item}")
+
 # print(semi_drag1, '\n', 'original drag')
 
 
