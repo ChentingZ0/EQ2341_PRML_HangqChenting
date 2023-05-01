@@ -90,8 +90,8 @@ frequence2 = np.arange(0,frame_num2)
 frequence3 = np.arange(0,frame_num3)
 
 
-print(frIsequence1.shape,type(frIsequence1),'dimension of frIsequence')
-print(frIsequence1[:,0:5],'print the first five frames')
+# print(frIsequence1.shape,type(frIsequence1),'dimension of frIsequence')
+# print(frIsequence1[:,0:5],'print the first five frames')
 # ----------------------------------------------------
 
 # plot the pitch
@@ -202,7 +202,7 @@ plt.show()
 # ----------------------------------------------------
 
 filter_pitch1, filter_pitch1_log = filter_pitch(frIsequence1)
-print(filter_pitch1_log)
+# print(filter_pitch1_log)
 filter_pitch2, filter_pitch2_log = filter_pitch(frIsequence2)
 filter_pitch3, filter_pitch3_log = filter_pitch(frIsequence3)
 
@@ -244,8 +244,20 @@ semi_tone_absolute1, semi_drag1 = semi_adjust(filter_pitch1)
 semi_tone_absolute2, semi_drag2 = semi_adjust(filter_pitch2)
 semi_tone_absolute3, semi_drag3 = semi_adjust(filter_pitch3)
 
+for i in range(len(semi_drag1)):
+    semi_drag1[i] = (semi_drag1[i] - np.min(np.array(semi_drag1)))/(np.max(np.array(semi_drag1) - np.min(np.array(semi_drag1))))
+for i in range(len(semi_drag2)):
+    semi_drag2[i] = (semi_drag2[i] - np.min(np.array(semi_drag2)))/(np.max(np.array(semi_drag2) - np.min(np.array(semi_drag2))))
+for i in range(len(semi_drag3)):
+    semi_drag3[i] = (semi_drag3[i] - np.min(np.array(semi_drag3)))/(np.max(np.array(semi_drag3) - np.min(np.array(semi_drag3))))
+
+
+
+
+
 print(semi_drag1,'semitone1')
-print(semi_drag2,'semitone1')
+print(semi_drag2,'semitone2')
+print(semi_drag3,'semitone3')
 
 plt.figure(8)
 plt.subplot(3, 1, 1)
@@ -269,17 +281,17 @@ plt.plot(frequence2_temp, semi_drag2)
 plt.subplot(3, 1, 3)
 plt.plot(frequence3_temp, semi_drag3)
 plt.xlabel('Voice_frame')
-plt.ylabel('semi_tone_relative')
+plt.ylabel('semi_tone_drag')
 plt.title('semi_tones')
 plt.savefig('figures/semitones_drag.png')
 plt.show()
 
-# Finally feature -> semitones_drag!!!! discrete feature
+# Finally feature -> semitones_normalized!!!! discrete feature
 frIsequence1 = GetMusicFeatures.GetMusicFeatures(data1, sample_rate1)
 filter_pitch1, _ = filter_pitch(frIsequence1)
+
 semi_absolute1 , semi_drag1 = semi_adjust(filter_pitch1)
-print(semi_absolute1, '\n', 'absolute tone original')
-print(semi_drag1, '\n', 'trans original')
+
 
 
 # test if transposition invariant
@@ -287,32 +299,27 @@ frIsequence1_trans = np.copy(frIsequence1)
 shift = 5
 for i in range(0, frame_num2):
     # f2 = f1 * (2 ^ (1 / 12)) ^ n
-    frIsequence1_trans[0,i] = frIsequence1[0,i] * 2**(shift/12)
+    frIsequence1_trans[0, i] = frIsequence1[0, i] * 2 ** (shift/12)
 filter_pitch1_trans, _ = filter_pitch(frIsequence1_trans)
 semi_trans1_absolute, semi_drag1_trans = semi_adjust(filter_pitch1_trans)
-print(semi_trans1_absolute, '\n', 'absolute tone trans')
-print(semi_drag1_trans, '\n', 'trans semi')
+# print(semi_trans1_absolute, '\n', 'absolute tone trans')
+# print(semi_drag1_trans, '\n', 'trans semi')
 
 # test if volume invariant
-frIsequence1_vol = GetMusicFeatures.GetMusicFeatures(2 * data1, sample_rate1)
+
+frIsequence1_vol = GetMusicFeatures.GetMusicFeatures(1.5*data1, sample_rate1)
 filter_pitch1_vol, _ = filter_pitch(frIsequence1_vol)
-_, semi_drag1_vol = semi_adjust(filter_pitch1_vol)
-
-# test if octave invariant
-frIsequence1_octave = np.copy(frIsequence1)
-random_numbers = np.random.randint(0, frame_num1, size=5)
-print(random_numbers)       # randomly choose 10 frames to octave jump (2 octaves, *4)
-for i in range(len(random_numbers)):
-    frIsequence1_octave[0, random_numbers[i]] = 4 * frIsequence1[0, random_numbers[i]]
-filter_pitch1_octave, _ = filter_pitch(frIsequence1_octave)
-_, semi_drag1_octave = semi_adjust(filter_pitch1_octave)
-
+voice_frame_num1_vol = len(filter_pitch1_vol)
+frequence1_temp_vol = np.arange(0, voice_frame_num1_vol)
+semi_absolute1_vol , semi_drag1_vol = semi_adjust(filter_pitch1_vol)
 plt.figure(10)
 plt.plot(frequence1_temp, semi_drag1)
-# plt.plot(frequence1_temp, semi_drag1_octave)
-plt.plot(frequence1_temp, semi_drag1_trans)
-
-# plt.subplot(3,1,3)
-# plt.plot(frequence1_temp, semi_drag1_vol)
-plt.savefig('figures/variation.png')
+plt.plot(frequence1_temp_vol, semi_drag1_vol)
+plt.xlabel('frame_num')
+plt.ylabel('semi_normalized')
+plt.savefig('figures/volumn_change.png')
 plt.show()
+
+# test if octave invariant
+# already in the program
+
