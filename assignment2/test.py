@@ -32,7 +32,8 @@ pitch1 = frIsequence1[0, :]
 
 # test if transposition invariant
 frIsequence1_trans = np.copy(frIsequence1)
-shift = 7
+frIsequence1_trans_try = np.copy(frIsequence1)
+shift = 5
 for i in range(0, frame_num1):
     # f2 = f1 * (2 ^ (1 / 12)) ^ n
     frIsequence1_trans[0, i] = frIsequence1[0, i] * 2**(shift/12)
@@ -49,8 +50,6 @@ pitch1_trans = frIsequence1_trans[0, :]
 #     print("Zero exists in the pitch1_trans.")
 # else:
 #     print("Zero does not exist in pitch1_trans.")
-#
-
 
 
 # Feature

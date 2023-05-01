@@ -55,6 +55,8 @@ print(octave_C_log)
 # # test_note2 = 2**8
 # print(test_note)
 # print(test_note2)
+
+# test two notes with transposition, standard
 octave, semi_tone_relative, semitone_absolute, note = analysis_note(168.43556171751226)
 print(octave, semi_tone_relative, semitone_absolute, note)
 

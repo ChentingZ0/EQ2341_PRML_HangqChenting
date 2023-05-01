@@ -117,8 +117,6 @@ def analysis_note(test_tone):
 
     # print("The test tone belongs to octave C{}".format(octave))
     semitones_specific = semi_tones[octave - 1]
-    # print(semitones_specific)
-    # print([2**i for i in semitones_specific])
     test_tone_log = np.log2(test_tone)
     semi_tone_relative = 0
 
@@ -141,8 +139,13 @@ def analysis_note(test_tone):
     note = note_name(semi_tone_relative)
     return octave, semi_tone_relative, semitone_absolute, note
 
-
+from collections import Counter
 def semi_adjust(filter_pitch):
+    index_change = np.random.randint(0, len(filter_pitch), 3)
+    for i in index_change:
+        temp = 3
+        filter_pitch[i] = temp * filter_pitch[i]
+
     semi_tone_absolute = np.zeros(len(filter_pitch))
 
     for i in range(len(filter_pitch)):
@@ -151,15 +154,36 @@ def semi_adjust(filter_pitch):
 
     # transpose invariant
     # relative interval should stay the same, all drag to C1
+
     mid = np.median(semi_tone_absolute)
     semi_drag = semi_tone_absolute - mid
 
 
-    # octave invariant(suddenly one note change)
+    # octave invariant(suddenly one or few frequency change)
     # how to define a sudden jump note
     # for i in range(len(semi_drag)):
     #     if semi_drag[i] > 12 or semi_drag[i] < 12:    # limitation, how to perceive octave jump? worth thinking
     #         semi_drag[i] = semi_drag[i] % 12
+
+    # for i in range(len(filter_pitch)):
+    #     if filter_pitch[i]
+    #  10,10,10,10,10,5,5,5,5,5,5,5,17,5,5,5,5,17,17,5,5,5,5,17,17,17
+
+    threshold = 15  # window length = (threshold-1)*2
+    for i in range(threshold, (len(semi_tone_absolute)-threshold)):
+        # print(i, i-threshold+1 ,i+threshold-1)
+        temp_list = list(semi_tone_absolute[i-threshold+1:i+threshold-1])
+        # if len(set(temp_list)) > 1:
+        #     semi_tone_absolute[i] = temp_list[0]
+        count_dict = dict(Counter(temp_list))
+        if len(list(count_dict.values())) > 1:
+            min_element = list(count_dict.keys())[list(count_dict.values()).index(min(count_dict.values()))]
+            max_element = list(count_dict.keys())[list(count_dict.values()).index(max(count_dict.values()))]
+            if min_element == semi_tone_absolute[i] and count_dict[min_element] < threshold:
+                semi_tone_absolute[i] = max_element
+
+
+
     return semi_tone_absolute, semi_drag
 
 
