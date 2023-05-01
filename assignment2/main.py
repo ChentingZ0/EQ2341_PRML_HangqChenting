@@ -199,7 +199,7 @@ plt.ylabel('Normalized intensity')
 plt.title('melody 3')
 plt.savefig('figures/normalized intensity.png')
 plt.show()
-
+# ----------------------------------------------------
 
 filter_pitch1, filter_pitch1_log = filter_pitch(frIsequence1)
 print(filter_pitch1_log)

@@ -5,21 +5,22 @@ import math
 import statistics
 
 
-def median_nonzero(input_list):
-    # hyperparameter len(assigned duration of each note and silence)
+def mean_nonzero(input_list):
     sublists = []
     sublist = []
-
+    sublist_zero = []
     for num in input_list:
+        # if num == 0:
+        #     sublist_zero.append(0)
         if num != 0:
             sublist.append(num)
         elif sublist:
-            templist = [statistics.median(sublist)] * len(sublist)
+            templist = [statistics.mean(sublist)] * len(sublist)
             sublists.append(templist)
             sublist = []
 
     if sublist:
-        templist_last = [statistics.median(sublist)] * len(sublist)
+        templist_last = [statistics.mean(sublist)] * len(sublist)
         sublists.append(templist_last)
 
     sublists = [elem for row in sublists for elem in row]
@@ -64,8 +65,8 @@ def filter_pitch(frIsequence):
             pitch[i] = 0
     # subdivide the note based on non-zero value
 
-    pitch = median_nonzero(pitch)
-    pitch_log = median_nonzero(pitch_log)
+    pitch = mean_nonzero(pitch)
+    pitch_log = np.log2(pitch)
     return pitch, pitch_log
 
 
@@ -150,15 +151,15 @@ def semi_adjust(filter_pitch):
 
     # transpose invariant
     # relative interval should stay the same, all drag to C1
-    lowest = np.min(semi_tone_absolute)
-    semi_drag = semi_tone_absolute - lowest
+    mid = np.median(semi_tone_absolute)
+    semi_drag = semi_tone_absolute - mid
 
 
     # octave invariant(suddenly one note change)
     # how to define a sudden jump note
-    for i in range(len(semi_drag)):
-        if semi_drag[i] > 12:    # limitation, how to perceive octave jump? worth thinking
-            semi_drag[i] = semi_drag[i] % 12
+    # for i in range(len(semi_drag)):
+    #     if semi_drag[i] > 12 or semi_drag[i] < 12:    # limitation, how to perceive octave jump? worth thinking
+    #         semi_drag[i] = semi_drag[i] % 12
     return semi_tone_absolute, semi_drag
 
 
