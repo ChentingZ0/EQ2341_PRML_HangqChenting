@@ -284,7 +284,8 @@ frIsequence1_trans = np.copy(frIsequence1)
 shift = 5
 for i in range(0, frame_num1):
     # f2 = f1 * (2 ^ (1 / 12)) ^ n
-    frIsequence1_trans[0, i] = frIsequence1[0, i] * 2**(shift/12)
+    # frIsequence1_trans[0, i] = frIsequence1[0, i] * 2**(shift/12)
+    frIsequence1_trans[0, i] = frIsequence1[0, i] * 1.5
 
 pitch1_trans = frIsequence1_trans[0, :]
 

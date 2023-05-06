@@ -135,6 +135,10 @@ def semi_adjust(filter_pitch):
         if filter_pitch[i] != 0:
             _, _, semi_tone_absolute[i], _ = analysis_note(filter_pitch[i])
 
+    # rand_list = np.random.randint(0, len(semi_tone_absolute), 5)
+    # for i in rand_list:
+    #     semi_tone_absolute[i] = semi_tone_absolute[i] + 12
+
     threshold = 5  # window length = (threshold-1)*2
     for i in range(len(semi_tone_absolute)):
 
