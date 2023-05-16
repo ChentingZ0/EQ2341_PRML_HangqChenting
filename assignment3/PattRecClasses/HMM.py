@@ -102,7 +102,7 @@ class HMM:
 
     def logprob(self, p_x):
         alpha_hat, c = self.stateGen.forward(p_x)
-        c_log = [np.log(c_i) for c_i in c]
+        c_log = [np.log(c_i) for c_i in c]  # 5.54
         return sum(c_log)
 
     def adaptStart(self):
