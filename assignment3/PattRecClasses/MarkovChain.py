@@ -137,7 +137,7 @@ class MarkovChain:
         pass
 
     def forward(self, p_x):  # p_x is a matrix of shape N, T
-        print(p_x)
+        # print(p_x)
         alpha_hat, c = [], []  # scaled forward variable, scaled factors (c)
         n_states = p_x.shape[0]  # N
         t_max = p_x.shape[1]  # T
