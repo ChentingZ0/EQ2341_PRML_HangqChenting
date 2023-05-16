@@ -18,8 +18,8 @@ P = np.e ** (logP - np.max(logP, axis=0))  # normalized
 mc = MarkovChain(np.array([1, 0]), np.array([[0.9, 0.1, 0], [0, 0.9, 0.1]]))  # finite
 h = HMM(mc, g)
 alpha_hat, norms = mc.forward(P)
-print(alpha_hat)
-print(norms)
+# print(alpha_hat)
+# print(norms)
 logprob = h.logprob(P)
-print(logprob)
+# print(logprob)
 
