@@ -172,9 +172,9 @@ class MarkovChain:
 
         """initialization"""
         if self.is_finite:
-            beta_hat0 = [beta/(c[-1]*c[-2]) for beta in self.A[:, -1]]
+            beta_hat0 = [beta/(c[-1]*c[-2]) for beta in self.A[:, -1]]  # eq 5.65
         else:
-            beta_hat0 = [1/c[-1] for i in range(self.A.shape[0])]
+            beta_hat0 = [1/c[-1] for i in range(self.A.shape[0])]  # eq 5.64
         beta_hat.insert(0, beta_hat0)
 
         """backward step"""
@@ -183,9 +183,9 @@ class MarkovChain:
         for t in range(len(c)):
             beta_hat_t = []
             for i in range(self.A.shape[0]):
-                res = sum([p_x[j, -t-1]*self.A[i, j]*beta_hat[0][j] for j in range(self.A.shape[0])])
-                res = res/c[t]
-                beta_hat_t.append(res)
+                beta_i_t = sum([p_x[j, -t-1]*self.A[i, j]*beta_hat[0][j] for j in range(self.A.shape[0])])
+                beta_hat_i_t = beta_i_t/c[t]
+                beta_hat_t.append(beta_hat_i_t)  # eq 5.70
             beta_hat.insert(0, beta_hat_t)
 
         return beta_hat
