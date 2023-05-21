@@ -19,6 +19,7 @@ class HMM:
     
     A HMM consists of two sub-objects:
     1: a State Sequence Generator of type MarkovChain "S"
+
     2: an array of output probability distributions, one for each state "X"
     
     All states must have the same class of output distribution,

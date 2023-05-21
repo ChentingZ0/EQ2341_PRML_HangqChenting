@@ -167,8 +167,29 @@ class MarkovChain:
     def finiteDuration(self):
         pass
     
-    def backward(self):
-        pass
+    def backward(self, c, p_x):
+        beta_hat = []
+
+        """initialization"""
+        if self.is_finite:
+            beta_hat0 = [beta/(c[-1]*c[-2]) for beta in self.A[:, -1]]
+        else:
+            beta_hat0 = [1/c[-1] for i in range(self.A.shape[0])]
+        beta_hat.insert(0, beta_hat0)
+
+        """backward step"""
+        c = c[:-2] if self.is_finite else c[:-1]
+        c.reverse()
+        for t in range(len(c)):
+            beta_hat_t = []
+            for i in range(self.A.shape[0]):
+                res = sum([p_x[j, -t-1]*self.A[i, j]*beta_hat[0][j] for j in range(self.A.shape[0])])
+                res = res/c[t]
+                beta_hat_t.append(res)
+            beta_hat.insert(0, beta_hat_t)
+
+        return beta_hat
+
 
     def adaptStart(self):
         pass
