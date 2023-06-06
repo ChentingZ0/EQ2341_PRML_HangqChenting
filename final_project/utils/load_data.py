@@ -5,7 +5,7 @@ import os
 
 data_path = '../data'
 
-files = os.listdir(data_path)
+files = ['iphone_data_3.txt', 'iphone_test.txt']
 
 data_file = [os.path.join(data_path, f) for f in files]
 
@@ -31,8 +31,8 @@ def read_file(txt_file):
 data0 = read_file(data_file[0])
 data1 = read_file(data_file[1])  # [data_length, 3]
 
-np.save(os.path.join(data_path, "data0.npy"), data0)
-np.save(os.path.join(data_path, "data1.npy"), data1)
+np.save(os.path.join(data_path, "train_data.npy"), data0)
+np.save(os.path.join(data_path, "test_data.npy"), data1)
 
 
 def plot_data(data_array):

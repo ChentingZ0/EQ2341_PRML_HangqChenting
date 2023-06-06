@@ -1,7 +1,7 @@
 from PattRecClasses.MarkovChain import MarkovChain
 from PattRecClasses.GaussD import GaussD
 from PattRecClasses.HMM import HMM
-from functionality import likelihood
+from utils.functionality import likelihood
 import numpy as np
 
 # define distribution and observed data
