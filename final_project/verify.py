@@ -16,7 +16,7 @@ pX_scaled = pX / np.max(pX, axis=0)  # normalized
 q = np.array([1, 0])
 A = np.array([[0.9, 0.1, 0], [0, 0.9, 0.1]])  # finite
 mc = MarkovChain(q, A)
-h = HMM(mc, g)
+hmm = HMM(mc, g)
 
 # forward
 alpha_hat, c = mc.forward(pX_scaled)
@@ -32,6 +32,6 @@ print("\nA = \n", A)
 print("\nalpha_hat =\n", np.array(alpha_hat).T)
 print("\nc =", np.array(c))
 print("\nbeta_hat =\n", np.array(beta_hat).T)
-log_prob = h.logprob(pX)
+log_prob = hmm.logprob(pX)
 print("\nP(X = x|λ)=", log_prob)
 

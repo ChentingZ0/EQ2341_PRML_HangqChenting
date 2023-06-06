@@ -46,5 +46,5 @@ def plot_data(data_array):
     plt.show()
 
 
-# plot_data(data0)
-# plot_data(data1)
+plot_data(data0)
+plot_data(data1)
