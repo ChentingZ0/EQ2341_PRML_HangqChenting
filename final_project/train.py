@@ -133,9 +133,12 @@ for iteration in range(20):
 
 # testing
 test_data = np.load('./data/test_data.npy').T
-state_seq, gamma = hmm_test(q_i, A_i, g_i, test_data)
+state_seq, gamma = hmm_test(q_i, A_i, g_i, train_data)
 
 plt.plot(state_seq)
+plt.xlabel("t")
+plt.ylabel("predicted state")
+plt.title("State predicted state sequence")
 plt.show()
 
 
