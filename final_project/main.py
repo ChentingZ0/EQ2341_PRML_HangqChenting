@@ -11,14 +11,11 @@ g1 = GaussD(means=[0, 0, 0], cov=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
 g2 = GaussD(means=[0, 0, 0], cov=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
 g3 = GaussD(means=[0, 0, 0], cov=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
 g = [g1, g2, g3]
+q = np.array([1, 0, 0])
+A = np.array([[0.8, 0.1, 0.1], [0.1, 0.8, 0.1], [0.1, 0.1, 0.8]])
 
 
 train_data = np.load('./data/train_data.npy').T
-
-q = np.array([1, 0, 0])
-A = np.array([[0.8, 0.1, 0.1], [0.1, 0.8, 0.1], [0.1, 0.2, 0.7]])  # finite
-
-
 def hmm_train(q, A, g, x):
     """
     One iteration HMM training function using the EM algorithm
