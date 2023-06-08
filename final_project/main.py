@@ -124,8 +124,8 @@ for iteration in range(epochs):
         g3 = GaussD(means=mean_i[2], cov=cov_i[2])
         g_i = [g1, g2, g3]
         q_i, A_i, mean_i, cov_i = hmm_train(q_i, A_i, g_i, train_data)  # update based on previous updated parameters
-
-
+        if iteration == 19:
+            print('updated q=','\n', q_i, '\n', 'updated A matrix=', '\n', A_i,'\n', 'updated mean vector=', '\n', mean_i,'\n', 'updated Covariance matrix=', '\n', cov_i, '\n')
 # test
 test_data = np.load('./data/test_data.npy').T
 state_seq, gamma = hmm_test(q_i, A_i, g_i, train_data)
