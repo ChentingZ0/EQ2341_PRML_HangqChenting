@@ -1,9 +1,9 @@
 from PattRecClasses.MarkovChain import MarkovChain
 from PattRecClasses.GaussD import GaussD
 from PattRecClasses.HMM import HMM
-from utils.functionality import likelihood
+from utils.functionality import likelihood, hmm_test
+from utils.load_data import plot_data
 import numpy as np
-from test import hmm_test
 import matplotlib.pyplot as plt
 
 # define distribution and observed data
@@ -20,10 +20,9 @@ A = np.array([[0.8, 0.1, 0.1], [0.1, 0.8, 0.1], [0.1, 0.2, 0.7]])  # finite
 
 
 def hmm_train(q, A, g, x):
-    """HMM training function using EM algorithm
+    """
+    One iteration HMM training function using the EM algorithm
         Input parameters:
-            mc: an object created from the class Markov Chain
-            hmm: an object created from the class HMM
             q: the initial state probabilities, len(q) = num_state
             A: transition matrix of hmm, len(q) = A.shape[0]
             g: the output distribution list, each element of g should be an object created from
@@ -37,10 +36,10 @@ def hmm_train(q, A, g, x):
             q_new: updated q
             A_new: updated A
             mean_new: list of new mean matrix for the updated Gaussian distributions
-            cov_new: list of new covariance matrix for the  updated Gaussian distributions"""
+            cov_new: list of new covariance matrix for the updated Gaussian distributions
+    """
 
     mc = MarkovChain(q, A)
-
     pX = likelihood(g, x)
     # print(pX)
     pX_scaled = pX / np.max(pX, axis=0)  # normalized
@@ -61,7 +60,7 @@ def hmm_train(q, A, g, x):
     # training
     # update q
     q_new = [gamma[0][i] for i in range(len(gamma[0]))]  # eq 7.55
-    print("q_new = \n", q_new)
+    # print("q_new = \n", q_new)
 
     # update A
     epsilon = [np.zeros(A.shape) for t in range(len(alpha_hat))]
@@ -84,8 +83,8 @@ def hmm_train(q, A, g, x):
         for j in range(A.shape[1]):
             A_new[i, j] = epsilon_bar[i, j] / np.sum(epsilon_bar[i, :])  # eq 6.13
 
-    print("A = \n", A)
-    print("A_new = \n", A_new)
+    # print("A = \n", A)
+    # print("A_new = \n", A_new)
 
     # update B
     gamma = np.array(gamma).T
@@ -96,42 +95,38 @@ def hmm_train(q, A, g, x):
         mu_new_i = numerator / np.sum(gamma[i, :])
         mean_new.append(mu_new_i)
 
-    print(mean_new)
+    # print("covariance new = \n", mean_new)
 
     cov_new = []
     for i in range(len(g)):
         numerator = None
         for t in range(x.shape[1]):
-            # print((x_Seq[:, t] - mean_new[i]).T @ (x_Seq[:, t] - mean_new[i]))
             res1 = np.expand_dims((x[:, t] - mean_new[i]), axis=1)
             res_product = res1 @ res1.T
             numerator = gamma[i, t] * res_product if t == 0 else numerator + gamma[i, t] * res_product
-        cov_new.append(numerator / np.sum(gamma[i, :]))
+        cov_new.append(numerator / np.sum(gamma[i, :]))  # eq 7.70
 
-    print("covariance new = \n", cov_new)
+    # print("covariance new = \n", cov_new)
 
     return q_new, A_new, mean_new, cov_new
 
 
-# training
+# train
+epochs = 20  # number of training iterations
 q_i, A_i, mean_i, cov_i, g_i = None, None, None, None, None
-for iteration in range(20):
-    print(iteration)
+for iteration in range(epochs):
+    print("training iteration:", iteration+1)
     if iteration == 0:
-        q_i, A_i, mean_i, cov_i = hmm_train(q, A, g, train_data)
+        q_i, A_i, mean_i, cov_i = hmm_train(q, A, g, train_data)  # first update based on initialized parameters
     else:
-        # g1 = GaussD(means=mean_i[0], cov=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
-        # g2 = GaussD(means=mean_i[1], cov=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
-        # g3 = GaussD(means=mean_i[2], cov=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
         g1 = GaussD(means=mean_i[0], cov=cov_i[0])
         g2 = GaussD(means=mean_i[1], cov=cov_i[1])
         g3 = GaussD(means=mean_i[2], cov=cov_i[2])
-
         g_i = [g1, g2, g3]
-        q_i, A_i, mean_i, cov_i = hmm_train(q_i, A_i, g_i, train_data)
+        q_i, A_i, mean_i, cov_i = hmm_train(q_i, A_i, g_i, train_data)  # update based on previous updated parameters
 
 
-# testing
+# test
 test_data = np.load('./data/test_data.npy').T
 state_seq, gamma = hmm_test(q_i, A_i, g_i, train_data)
 
@@ -140,18 +135,6 @@ plt.xlabel("t")
 plt.ylabel("predicted state")
 plt.title("State predicted state sequence")
 plt.show()
-
-
-def plot_data(data_array):
-    x = range(data_array.shape[0])
-    for i in range(data_array.shape[1]):
-        plt.plot(x, data_array[:, i])
-    plt.legend(["x", "y", "z"])
-    plt.xlabel("t")
-    plt.ylabel("accelerate")
-    plt.title("Variation of the accelerate data")
-    plt.show()
-
 
 plot_data(test_data.T)
 
