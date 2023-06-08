@@ -59,7 +59,7 @@ def hmm_train(q, A, g, x):
     # training
     # update q
     q_new = [gamma[0][i] for i in range(len(gamma[0]))]  # eq 7.55
-    # print("q_new = \n", q_new)
+    print("q_new = \n", q_new)
 
     # update A
     epsilon = [np.zeros(A.shape) for t in range(len(alpha_hat))]
@@ -82,8 +82,8 @@ def hmm_train(q, A, g, x):
         for j in range(A.shape[1]):
             A_new[i, j] = epsilon_bar[i, j] / np.sum(epsilon_bar[i, :])  # eq 6.13
 
-    # print("A = \n", A)
-    # print("A_new = \n", A_new)
+    print("A = \n", A)
+    print("A_new = \n", A_new)
 
     # update B
     gamma = np.array(gamma).T
@@ -94,7 +94,7 @@ def hmm_train(q, A, g, x):
         mu_new_i = numerator / np.sum(gamma[i, :])
         mean_new.append(mu_new_i)
 
-    # print(mean_new)
+    print(mean_new)
 
     cov_new = []
     for i in range(len(g)):
@@ -106,7 +106,7 @@ def hmm_train(q, A, g, x):
             numerator = gamma[i, t] * res_product if t == 0 else numerator + gamma[i, t] * res_product
         cov_new.append(numerator / np.sum(gamma[i, :]))
 
-    # print("covariance new = \n", cov_new)
+    print("covariance new = \n", cov_new)
 
     return q_new, A_new, mean_new, cov_new
 

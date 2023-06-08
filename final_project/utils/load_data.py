@@ -25,7 +25,7 @@ def read_file(txt_file):
             txt_list.append(line)
     file.close()
 
-    return np.array(txt_list[1:])[:, 1:]
+    return np.array(txt_list)[:, 1:]
 
 
 data0 = read_file(data_file[0])
