@@ -3,6 +3,8 @@ from PattRecClasses.GaussD import GaussD
 from PattRecClasses.HMM import HMM
 from utils.functionality import likelihood
 import numpy as np
+from test import hmm_test
+import matplotlib.pyplot as plt
 
 # define distribution and observed data
 g1 = GaussD(means=[0, 0, 0], cov=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
@@ -112,8 +114,8 @@ def hmm_train(q, A, g, x):
 
 
 # training
-q_i, A_i, mean_i, cov_i = None, None, None, None
-for iteration in range(10):
+q_i, A_i, mean_i, cov_i, g_i = None, None, None, None, None
+for iteration in range(20):
     print(iteration)
     if iteration == 0:
         q_i, A_i, mean_i, cov_i = hmm_train(q, A, g, train_data)
@@ -127,4 +129,26 @@ for iteration in range(10):
 
         g_i = [g1, g2, g3]
         q_i, A_i, mean_i, cov_i = hmm_train(q_i, A_i, g_i, train_data)
+
+
+# testing
+test_data = np.load('./data/test_data.npy').T
+state_seq, gamma = hmm_test(q_i, A_i, g_i, test_data)
+
+plt.plot(state_seq)
+plt.show()
+
+
+def plot_data(data_array):
+    x = range(data_array.shape[0])
+    for i in range(data_array.shape[1]):
+        plt.plot(x, data_array[:, i])
+    plt.legend(["x", "y", "z"])
+    plt.xlabel("t")
+    plt.ylabel("accelerate")
+    plt.title("Variation of the accelerate data")
+    plt.show()
+
+
+plot_data(test_data.T)
 
